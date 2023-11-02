@@ -6,9 +6,12 @@ import { BiLoaderCircle, BiSolidCloudUpload } from "react-icons/bi"
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { PiKnifeLight } from 'react-icons/pi'
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/user"
 import { UploadError } from "../types";
+import useCreatePost from "../hooks/useCreatePost";
 
 export default function Upload() {
+    const contextUser = useUser()
     const router = useRouter()
 
     let [fileDisplay, setFileDisplay] = useState<string>('');
@@ -17,6 +20,9 @@ export default function Upload() {
     let [error, setError] = useState<UploadError | null>(null);
     let [isUploading, setIsUploading] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (!contextUser?.user) router.push('/')
+    }, [contextUser])
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -40,10 +46,35 @@ export default function Upload() {
         setFile(null)
     }
 
+    const validate = () => {
+        setError(null)
+        let isError = false
 
+        if (!file) {
+            setError({ type: 'File', message: 'A video is required'})
+            isError = true
+        } else if (!caption) {
+            setError({ type: 'caption', message: 'A caption is required'})
+            isError = true
+        }
+        return isError
+    }
 
     const createNewPost = async () => {
-     console.log('creatNewPost')
+        let isError = validate()
+        if (isError) return
+        if (!file || !contextUser?.user) return
+        setIsUploading(true)
+
+        try {
+            await useCreatePost(file, contextUser?.user?.id, caption)
+            router.push(`/profile/${contextUser?.user?.id}`)
+            setIsUploading(false)
+        } catch (error) {
+            console.log(error)
+            setIsUploading(false)
+            alert(error)
+        }
     }
 
     return (
