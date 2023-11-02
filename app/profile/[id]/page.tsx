@@ -1,106 +1,122 @@
 "use client"
 
-import PostUser from "@/app/components/profile/PostUser"
-import MainLayout from "@/app/layouts/MainLayout"
-import { BsPencil } from "react-icons/bs"
+import Comments from "@/app/components/post/Comments"
+import CommentsHeader from "@/app/components/post/CommentsHeader"
+import Link from "next/link"
 import { useEffect } from "react"
-import { useUser } from "@/app/context/user"
+import { AiOutlineClose } from "react-icons/ai"
+import { BiChevronDown, BiChevronUp } from "react-icons/bi"
+import { useRouter } from "next/navigation"
 import ClientOnly from "@/app/components/ClientOnly"
-import { ProfilePageTypes, User } from "@/app/types"
+import { Post, PostPageTypes } from "@/app/types"
 import { usePostStore } from "@/app/stores/post"
-import { useProfileStore } from "@/app/stores/profile"
-import { useGeneralStore } from "@/app/stores/general"
+import { useLikeStore } from "@/app/stores/like"
+import { useCommentStore } from "@/app/stores/comment"
 import useCreateBucketUrl from "@/app/hooks/useCreateBucketUrl"
 
-export default function Profile({ params }: ProfilePageTypes) {
-    const contextUser = useUser()
-    let { postsByUser, setPostsByUser } = usePostStore()
-    let { setCurrentProfile, currentProfile } = useProfileStore()
-    let { isEditProfileOpen, setIsEditProfileOpen } = useGeneralStore()
+export default function Post({ params }: PostPageTypes) {
 
-    useEffect(() => {
-        setCurrentProfile(params?.id)
-        setPostsByUser(params?.id)
+    let { postById, postsByUser, setPostById, setPostsByUser } = usePostStore()
+    let { setLikesByPost } = useLikeStore()
+    let { setCommentsByPost } = useCommentStore()
+
+    const router = useRouter()
+
+    useEffect(() => { 
+        setPostById(params.postId)
+        setCommentsByPost(params.postId) 
+        setLikesByPost(params.postId)
+        setPostsByUser(params.userId) 
     }, [])
+
+    const loopThroughPostsUp = () => {
+        postsByUser.forEach(post => {
+            if (post.id > params.postId) {
+                router.push(`/post/${post.id}/${params.userId}`)
+            }
+        });
+    }
+
+    const loopThroughPostsDown = () => {
+        postsByUser.forEach(post => {
+            if (post.id < params.postId) {
+                router.push(`/post/${post.id}/${params.userId}`)
+            }
+        });
+    }
 
     return (
         <>
-            <MainLayout>
-                <div className="pt-[90px] ml-[90px] 2xl:pl-[185px] lg:pl-[160px] lg:pr-0 w-[calc(100%-90px)] pr-3 max-w-[1800px] 2xl:mx-auto">
+            <div 
+                id="PostPage" 
+                className="lg:flex justify-between w-full h-screen bg-black overflow-auto"
+            >
+                <div className="lg:w-[calc(100%-540px)] h-full relative">
+                    <Link
+                        href={`/profile/${params?.userId}`}
+                        className="absolute text-white z-20 m-5 rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
+                    >
+                        <AiOutlineClose size="27"/>
+                    </Link>
 
-                    <div className="flex w-[calc(100vw-230px)]">
+                    <div >
+                        <button 
+                            onClick={() => loopThroughPostsUp()}
+                            className="absolute z-20 right-4 top-4 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
+                        >
+                            <BiChevronUp size="30" color="#FFFFFF"/>
+                        </button>
+
+                        <button  
+                            onClick={() => loopThroughPostsDown()}
+                            className="absolute z-20 right-4 top-20 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
+                        >
+                            <BiChevronDown size="30" color="#FFFFFF"/>
+                        </button>
+                    </div>
+
+                    <img 
+                        className="absolute z-20 top-[18px] left-[70px] rounded-full lg:mx-0 mx-auto" 
+                        width="45" 
+                        src="/images/tiktok-logo-small.png"
+                    />
+
+                    <ClientOnly>
+                        {postById?.video_url ? (
+                            <video 
+                                className="fixed object-cover w-full my-auto z-[0] h-screen" 
+                                src={useCreateBucketUrl(postById?.video_url)}
+                            />
+                        ) : null}
+
+                        <div className="bg-black bg-opacity-70 lg:min-w-[480px] z-10 relative">
+                            {postById?.video_url ? (
+                                <video 
+                                    autoPlay
+                                    controls
+                                    loop
+                                    muted
+                                    className="h-screen mx-auto" 
+                                    src={useCreateBucketUrl(postById.video_url)}
+                                />
+                            ) : null}
+                        </div>
+                    </ClientOnly>
+
+                </div>
+
+                <div id="InfoSection" className="lg:max-w-[550px] relative w-full h-full bg-white">
+                    <div className="py-7" />
 
                         <ClientOnly>
-                            {currentProfile ? (
-                                <img className="w-[120px] min-w-[120px] rounded-full" src={useCreateBucketUrl(currentProfile?.image)} />
-                            ) : (
-                                <div className="min-w-[150px] h-[120px] bg-gray-200 rounded-full" />
-                            )}
+                            {postById ? (
+                                <CommentsHeader post={postById} params={params}/>
+                            ) : null}
                         </ClientOnly>
+                        <Comments params={params}/>
 
-                        <div className="ml-5 w-full">
-                            <ClientOnly>
-                                {(currentProfile as User)?.name ? (
-                                    <div>
-                                        <p className="text-[30px] font-bold truncate">{currentProfile?.name}</p>
-                                        <p className="text-[18px] truncate">{currentProfile?.name}</p>
-                                    </div>
-                                ) : (
-                                    <div className="h-[60px]" />
-                                )}
-                            </ClientOnly>
-
-                            
-                            {contextUser?.user?.id == params?.id ? (
-                                <button 
-                                    onClick={() => setIsEditProfileOpen(isEditProfileOpen = !isEditProfileOpen)}
-                                    className="flex item-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100"
-                                >
-                                    <BsPencil className="mt-0.5 mr-1" size="18"/>
-                                    <span>Edit profile</span>
-                                </button>
-                            ) : (
-                                <button className="flex item-center rounded-md py-1.5 px-8 mt-3 text-[15px] text-white font-semibold bg-[#F02C56]">
-                                    Follow
-                                </button>
-                            )}
-                        </div>
-
-                    </div>
-
-                    <div className="flex items-center pt-4">
-                        <div className="mr-4">
-                            <span className="font-bold">10K</span>
-                            <span className="text-gray-500 font-light text-[15px] pl-1.5">Following</span>
-                        </div>
-                        <div className="mr-4">
-                            <span className="font-bold">44K</span>
-                            <span className="text-gray-500 font-light text-[15px] pl-1.5">Followers</span>
-                        </div>
-                    </div>
-
-                    <ClientOnly>
-                        <p className="pt-4 mr-4 text-gray-500 font-light text-[15px] pl-1.5 max-w-[500px]">
-                            {currentProfile?.bio}
-                        </p>
-                    </ClientOnly>
-
-                    <ul className="w-full flex items-center pt-4 border-b">
-                        <li className="w-60 text-center py-2 text-[17px] font-semibold border-b-2 border-b-black">Videos</li>
-                        <li className="w-60 text-gray-500 text-center py-2 text-[17px] font-semibold">Liked</li>
-                    </ul>
-
-                    <ClientOnly>
-                        <div className="mt-4 grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3">
-                            {postsByUser?.map((post, index) => (
-                                <PostUser key={index} post={post} />
-                            ))}
-                        </div>
-                    </ClientOnly>
-
-                    <div className="pb-20" />
                 </div>
-            </MainLayout>
+            </div>
         </>
     )
 }
