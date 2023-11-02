@@ -12,12 +12,47 @@ export interface PostWithProfile {
   }
 }
 
+export interface CommentWithProfile {
+  id: string;
+  user_id: string;
+  post_id: string;
+  text: string;
+  created_at: string;
+  profile: {
+      user_id: string;
+      name: string;
+      image: string;
+  }
+}
+
+
 export interface CropperDimensions {
   height?: number | null;
   width?: number | null;
   left?: number | null;
   top?: number | null;
 }
+
+export interface CommentsCompTypes {
+  params: { userId: string; postId: string; };
+}
+
+export interface SingleCommentCompTypes {
+  params: { userId: string; postId: string; };
+  comment: CommentWithProfile
+}
+
+
+export interface CommentsHeaderCompTypes {
+  params: { userId: string; postId: string; };
+  post: PostWithProfile
+}
+
+
+export interface PostPageTypes {
+  params: { userId: string; postId: string; };
+}
+
 
 export interface TextInputCompTypes {
   string: string;
