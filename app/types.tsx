@@ -16,6 +16,19 @@ export interface Like{
   id:string;
   user_id:string;
   post_id:string;
+  
+}
+
+export interface MenuItemTypes {
+  iconString: string,
+  colorString: string,
+  sizeString: string
+}
+
+export interface RandomUsers {
+  id: string;
+  name: string;
+  image: string;
 }
 
 export interface Comment {
@@ -26,6 +39,12 @@ export interface Comment {
   created_at: string;
 }
 
+export interface UploadError {
+  type: string;
+  message: string;
+}
+
+
 
 export interface PostMainLikesCompTypes {
   post: PostWithProfile
@@ -35,17 +54,6 @@ export interface PostMainCompTypes {
   post: PostWithProfile
 }
 
-export interface RandomUsers {
-  id: string;
-  name: string;
-  image: string;
-}
-
-export interface MenuItemTypes {
-  iconString: string,
-  colorString: string,
-  sizeString: string
-}
 
 export interface MenuItemFollowCompTypes {
   user: RandomUsers
