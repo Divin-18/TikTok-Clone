@@ -1,6 +1,7 @@
 "use client"
 
-import PostUser from "@/app/components/profile/PostUser"
+// import PostUser from "@/app/components/profile/PostUser"
+import PostUser from "@/app/components/Profile/PostUser"
 import MainLayout from "@/app/layouts/MainLayout"
 import { BsPencil } from "react-icons/bs"
 import { useEffect } from "react"
