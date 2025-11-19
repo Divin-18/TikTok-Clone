@@ -4,8 +4,8 @@ import useGetProfileByUserId from "./useGetProfileByUserId";
 const useGetAllPosts = async () => {
     try {
         const response = await database.listDocuments(
-            String(process.env.NEXT_PUBLIC_DATABASE_ID), 
-            String(process.env.NEXT_PUBLIC_COLLECTION_ID_POST), 
+            String(process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID), 
+            String(process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ID_POST), 
             [ Query.orderDesc("$id") ]
         );
         const documents = response.documents;
