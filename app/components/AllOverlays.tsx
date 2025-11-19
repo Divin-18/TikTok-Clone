@@ -2,7 +2,7 @@
 
 import { useGeneralStore } from "../stores/general";
 import AuthOverlay from "./AuthOverlay";
-import EditProfileOverlay from "./profile/EditProfileOverlay";
+import EditProfileOverlay from "./Profile/EditProfileOverLay";
 import ClientOnly from "./ClientOnly";
 
 export default function AllOverlays() {

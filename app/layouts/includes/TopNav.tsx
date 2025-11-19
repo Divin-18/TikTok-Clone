@@ -110,7 +110,7 @@ export default function TopNav() {
                                         onClick={() => setShowMenu(showMenu = !showMenu)} 
                                         className="mt-1 border border-gray-200 rounded-full"
                                     >
-                                        <img className="rounded-full w-[35px] h-[35px]" src={useCreateBucketUrl(userContext?.user?.image || '')} />
+                                        <img className="rounded-full w-[35px] h-[35px]" src={useCreateBucketUrl(userContext?.user?.image) || undefined} />
                                     </button>
                                     
                                     {showMenu ? (

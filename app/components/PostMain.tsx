@@ -23,12 +23,15 @@ export default function PostMain({ post }: PostMainCompTypes) {
         }
     }, [])
 
+    const profileImageUrl = useCreateBucketUrl(post.profile.image);
+
     return (
         <>
             <div id={`PostMain-${post.id}`} className="flex border-b py-6">
 
                 <div className="cursor-pointer">
-                    <img className="rounded-full max-h-[60px]" width="60" src={useCreateBucketUrl(post?.profile?.image)} />
+                    <img className="rounded-full max-h-[60px]" width="60"
+                    src={profileImageUrl || undefined} />
                 </div>
 
                 <div className="pl-3 w-full px-4">
@@ -61,7 +64,7 @@ export default function PostMain({ post }: PostMainCompTypes) {
                                 controls
                                 muted
                                 className="rounded-xl object-cover mx-auto h-full" 
-                                src={useCreateBucketUrl(post?.video_url)}
+                                src={useCreateBucketUrl(post?.video_url) || undefined}
                             />
                             <img 
                                 className="absolute right-2 bottom-10" 

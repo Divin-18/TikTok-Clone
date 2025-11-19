@@ -1,5 +1,5 @@
 import React from "react"
-import SideNavMain from "./includes/SideNavMain"
+import SideNavMain from "./includes/SideNavMAin"
 import TopNav from "./includes/TopNav"
 import { usePathname } from "next/navigation"
 

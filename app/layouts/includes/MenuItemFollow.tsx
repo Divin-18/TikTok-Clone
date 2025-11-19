@@ -4,6 +4,8 @@ import Link from "next/link"
 import { AiOutlineCheck } from "react-icons/ai"
 
 export default function MenuItemFollow({ user }: MenuItemFollowCompTypes) {
+
+    const imageUrl = useCreateBucketUrl(user?.image)
     
     return (
         <>
@@ -14,7 +16,7 @@ export default function MenuItemFollow({ user }: MenuItemFollowCompTypes) {
                 <img 
                     className="rounded-full lg:mx-0 mx-auto" 
                     width="35" 
-                    src={useCreateBucketUrl(user?.image)}
+                    src={imageUrl || undefined}
                 />
                 <div className="lg:pl-2.5 lg:block hidden">
                     <div className="flex items-center">
